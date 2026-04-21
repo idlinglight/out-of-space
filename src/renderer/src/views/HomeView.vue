@@ -7,6 +7,7 @@ import BreadcrumbRootbar from '@/components/BreadcrumbRootbar.vue'
 import BreadcrumbToolbar from '@/components/BreadcrumbToolbar.vue'
 import { useKeyboardNavigation } from '@/composables/useKeyboardNavigation'
 import type { FileNode } from '@shared/types'
+import {formatBytes} from "@shared/format";
 
 const scanStore = useScanStore()
 const viewRoot = ref<FileNode | null>(null)
@@ -145,6 +146,7 @@ async function openInTerminal(node?: FileNode): Promise<void> {
         <span v-if="statusHint" class="status-hint">{{ statusHint }}</span>
         <span v-else-if="contextMenu" class="status-path">{{ contextMenu.node.path }}</span>
         <span v-else-if="hoveredPath" class="status-path">{{ hoveredPath }}</span>
+        <span v-else-if="scanStore.selectedNode" class="status-hint">{{ formatBytes(scanStore.selectedNode.size)  }}</span>
       </div>
     </div>
     <ContextMenu
