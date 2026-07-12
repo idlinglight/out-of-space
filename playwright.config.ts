@@ -9,7 +9,8 @@ export default defineConfig({
   timeout: 30_000,
   // One Electron instance at a time; the suite is a single serial journey
   workers: 1,
-  fullyParallel: false,
+  // A stray committed test.only must fail CI, not silently shrink the suite
+  forbidOnly: !!process.env.CI,
   // No retries by design: the suite is small and deterministic, so flakes
   // should surface as failures to fix, not be retried away
   retries: 0,

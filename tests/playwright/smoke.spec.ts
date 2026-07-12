@@ -1,5 +1,6 @@
 import { join } from 'path'
 import { test, expect, type ElectronApplication, type Page } from '@playwright/test'
+import type { ElectronApi } from '../../src/shared/types'
 import { createFixtureTree, type FixtureTree } from './helpers/fixture-tree'
 import { launchApp, stubFolderDialog } from './helpers/launch'
 
@@ -28,7 +29,9 @@ test.beforeAll(async () => {
 
 test.afterAll(async () => {
   if (TRACE && app) {
-    await app.context().tracing.stop({ path: 'test-results/smoke-trace.zip' })
+    // The context may already be gone (app crash mid-journey) — a failed
+    // trace save must not block app.close() and fixture.cleanup() below
+    await app.context().tracing.stop({ path: 'test-results/smoke-trace.zip' }).catch(() => {})
   }
   await app?.close()
   await fixture?.cleanup()
@@ -36,9 +39,11 @@ test.afterAll(async () => {
 
 test.afterEach(async ({}, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus && page) {
-    const path = testInfo.outputPath('failure.png')
-    await page.screenshot({ path }).catch(() => {})
-    testInfo.attachments.push({ name: 'screenshot', path, contentType: 'image/png' })
+    try {
+      await testInfo.attach('screenshot', { body: await page.screenshot(), contentType: 'image/png' })
+    } catch {
+      // Page may be gone (app crash) — nothing to attach
+    }
   }
 })
 
@@ -48,6 +53,18 @@ test('boots the built app to the welcome screen', async () => {
   await expect(page.getByRole('button', { name: 'Open Folder' })).toBeVisible()
 })
 
+// Compile-time-exhaustive mirror of the bridge contract: adding, removing,
+// or renaming a method on ElectronApi without updating this map fails
+// typecheck instead of surfacing minutes into the CI e2e job
+const EXPECTED_API: Record<keyof ElectronApi, 'function'> = {
+  selectFolder: 'function',
+  scanFolder: 'function',
+  showInFinder: 'function',
+  openInTerminal: 'function',
+  onScanProgress: 'function',
+  offScanProgress: 'function'
+}
+
 test('preload bridge exposes the typed api', async () => {
   const apiShape = await page.evaluate(() => {
     const api = (window as { api?: Record<string, unknown> }).api
@@ -56,14 +73,11 @@ test('preload bridge exposes the typed api', async () => {
       .sort()
       .map((key) => `${key}:${typeof api[key]}`)
   })
-  expect(apiShape).toEqual([
-    'offScanProgress:function',
-    'onScanProgress:function',
-    'openInTerminal:function',
-    'scanFolder:function',
-    'selectFolder:function',
-    'showInFinder:function'
-  ])
+  expect(apiShape).toEqual(
+    Object.keys(EXPECTED_API)
+      .sort()
+      .map((key) => `${key}:function`)
+  )
 })
 
 test('scans a folder and renders the treemap', async () => {
