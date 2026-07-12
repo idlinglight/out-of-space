@@ -54,8 +54,9 @@ Two IPC patterns are in use:
 
 ### Known Electron quirks (macOS)
 
-- **`representedObject is not a WeakPtrToElectronMenuModelAsNSObject`** — Console warning triggered by clicking the Window menu. This is an upstream Electron/Cocoa menu integration issue, not caused by our code. Harmless (no functional impact). See [electron/electron#23778](https://github.com/electron/electron/pull/23778) for related context. Will resolve with a future Electron update — no action needed on our side.
-- **`[DEP0180] fs.Stats constructor is deprecated`** — One-time deprecation warning from Node.js internals when `lstat` is called during directory scanning. Upstream Electron/Node issue, not caused by our code. Harmless — will resolve with a future Electron update.
+Currently none. Two previously documented harmless console warnings (`representedObject`/WeakPtr on Window-menu clicks, `[DEP0180] fs.Stats constructor is deprecated` during scans) were resolved upstream and are gone as of the Electron 43 upgrade (issue #43) — don't re-add them from older notes.
+
+Since Electron 42, the npm package no longer downloads the binary via `postinstall`; after a fresh `npm ci` run `npx install-electron` (the binary otherwise downloads on demand at first launch).
 
 ## Conventions
 
