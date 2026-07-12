@@ -40,6 +40,15 @@ function createWindow(): void {
 }
 
 app.whenReady().then(() => {
+  // Build identity in "Out Of Space" → "About": marketing version plus
+  // git describe + build time in the parenthesized CFBundleVersion slot,
+  // so a smoke tester can tell which build is running (issue #49)
+  app.setAboutPanelOptions({
+    applicationName: 'Out Of Space',
+    applicationVersion: app.getVersion(),
+    version: `${__GIT_SHA__}, built ${__BUILD_TIME__}`
+  })
+
   ipcMain.handle(IpcChannels.SELECT_FOLDER, handleSelectFolder)
   ipcMain.handle(IpcChannels.SCAN_FOLDER, handleScanFolder)
   ipcMain.handle(IpcChannels.SHOW_IN_FINDER, handleShowInFinder)

@@ -79,6 +79,10 @@ A lightweight desktop app that scans a local directory and presents an interacti
 
 - **Scan progress:** Main process streams live progress (file count + current path) to renderer via `webContents.send()` push channel, throttled with a generic `makeThrottled` utility. Renderer shows a semi-transparent overlay during scan (blocking interaction with stale data). The `isDestroyed()` guard on the sender prevents crashes when the window closes mid-scan.
 
+## Resolved Decisions (Step 6)
+
+- **Build identity over version-bump conventions (issue #49):** To tell which build is running during smoke tests, the About panel's parenthesized slot (`CFBundleVersion`) carries `git describe --always --dirty` plus a build timestamp, injected at build time via `define` in `electron.vite.config.ts` and applied with `app.setAboutPanelOptions()`. Packaged builds also set electron-builder's `buildVersion`. A convention of manually bumping the patch version per PR was considered and rejected: discipline-dependent, and its carveouts make the signal untrustworthy exactly when it's needed. Semver bumps remain reserved for meaningful releases.
+
 ## Open Questions
 
 (none currently)
