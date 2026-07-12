@@ -31,6 +31,12 @@ npm run dev
 # Type check
 npm run typecheck
 
+# Unit/component tests (Vitest)
+npm test
+
+# End-to-end smoke tests (Playwright, launches the built app)
+npm run test:e2e
+
 # Production build
 npm run build
 ```

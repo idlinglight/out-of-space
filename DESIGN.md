@@ -83,6 +83,10 @@ A lightweight desktop app that scans a local directory and presents an interacti
 
 - **Build identity over version-bump conventions (issue #49):** To tell which build is running during smoke tests, the About panel's parenthesized slot (`CFBundleVersion`) carries `git describe --always --dirty` plus a build timestamp, injected at build time via `define` in `electron.vite.config.ts` and applied with `app.setAboutPanelOptions()`. Packaged builds also set electron-builder's `buildVersion`. A convention of manually bumping the patch version per PR was considered and rejected: discipline-dependent, and its carveouts make the signal untrustworthy exactly when it's needed. Semver bumps remain reserved for meaningful releases.
 
+## Resolved Decisions (Step 7)
+
+- **End-to-end smoke suite (issue #53):** Playwright's Electron driver launches the built app and exercises the wiring the Vitest/jsdom suite can't see: preload contextBridge, main↔renderer IPC round-trips, boot of the built output, and real Chromium rendering of the D3 treemap — the regression class dependency-bump PRs introduce while unit tests stay green. Deliberately smoke-scoped (flake budget): boot plus a few core flows over a generated fixture tree, no retries, logic/component coverage stays in Vitest. The native folder dialog is stubbed in the main process (`electronApp.evaluate()`) — the one seam Playwright can't drive. CI runs it on `macos-latest` (the shipping target, no xvfb needed). A renderer-only variant (browser + mocked `window.api`) was considered and rejected: it mostly duplicates component-test coverage while missing the integration layer that motivates the suite.
+
 ## Open Questions
 
 (none currently)

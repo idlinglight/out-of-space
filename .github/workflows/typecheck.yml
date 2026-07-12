@@ -16,3 +16,30 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run test
+
+  e2e:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      # Electron ≥42 no longer downloads its binary via postinstall;
+      # install-electron fetches it into this cache explicitly
+      - uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/electron
+          key: electron-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: electron-${{ runner.os }}-
+      - run: npm ci
+      - run: npx install-electron
+      # Playwright drives Electron's bundled Chromium — no browser download
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-results
+          path: test-results/
+          retention-days: 7

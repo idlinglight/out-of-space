@@ -99,3 +99,12 @@ We use **GitHub Issues** (via `gh`) as the shared backlog.
 - **Run:** `npm test` (single run), `npm run test:watch` (watch mode)
 - **Mocking `window.api`:** Use `vi.stubGlobal('api', mockApi)` in renderer tests
 - **Pinia in tests:** `setActivePinia(createPinia())` in `beforeEach` — no `@pinia/testing` needed
+
+### End-to-end (Playwright, issue #53)
+
+- **Location:** `tests/playwright/` — Playwright's Electron driver against the built app (`out/`)
+- **Run:** `npm run test:e2e` (builds first; launches the real app window locally — brief focus steal is expected)
+- **Fixture:** the scanned tree is generated at test setup into a temp dir (deterministic sizes; nothing committed)
+- **Native dialog:** `dialog.showOpenDialog` is stubbed inside the main process via `electronApp.evaluate()` — the only seam Playwright can't drive; everything downstream (IPC, scanner, rendering) is real
+- **Flake budget — scope discipline:** this suite stays at smoke level: boot + a few core flows over a deterministic fixture, its only job being "the assembled app works". Logic and component testing belong in Vitest — do not grow this into a second component suite, and keep `retries: 0` so flakes surface as failures to fix rather than being retried away.
+- **Known coupling:** Playwright's Electron driver occasionally lags a new Electron major — if an Electron bump PR fails only in the e2e job, suspect that before a real regression.

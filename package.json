@@ -16,10 +16,12 @@
     "typecheck": "npm run typecheck:node && npm run typecheck:web",
     "package": "electron-vite build && electron-builder --mac -c.buildVersion=\"$(git describe --always --dirty)\"",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "electron-vite build && playwright test"
   },
   "devDependencies": {
     "@electron-toolkit/utils": "^4.0.0",
+    "@playwright/test": "^1.61.1",
     "@types/d3": "^7.4.3",
     "@vitejs/plugin-vue": "^6.0.4",
     "@vue/test-utils": "^2.4.6",
