@@ -13,12 +13,23 @@ let app: ElectronApplication
 let page: Page
 let fixture: FixtureTree
 
+// OOS_E2E_TRACE=1 records a Playwright trace of the whole journey —
+// step-by-step timeline with before/after screenshots and DOM snapshots.
+// Inspect with: npx playwright show-trace test-results/smoke-trace.zip
+const TRACE = !!process.env['OOS_E2E_TRACE']
+
 test.beforeAll(async () => {
   fixture = await createFixtureTree()
   ;({ app, page } = await launchApp())
+  if (TRACE) {
+    await app.context().tracing.start({ screenshots: true, snapshots: true, title: 'smoke journey' })
+  }
 })
 
 test.afterAll(async () => {
+  if (TRACE && app) {
+    await app.context().tracing.stop({ path: 'test-results/smoke-trace.zip' })
+  }
   await app?.close()
   await fixture?.cleanup()
 })

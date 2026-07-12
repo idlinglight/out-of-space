@@ -1,4 +1,4 @@
-name: Typecheck & Test
+name: CI
 
 on:
   pull_request:
