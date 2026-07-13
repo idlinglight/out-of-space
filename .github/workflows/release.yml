@@ -1,0 +1,79 @@
+# Release: build, sign, notarize, and draft a GitHub release for a v* tag.
+#
+# Security posture (see issue #55 and docs/RELEASING.md):
+# - Secrets live in the `release` environment, restricted to v* tags with a
+#   required-reviewer gate — PR and branch workflows cannot reach them.
+# - Only GitHub-owned actions, pinned to full commit SHAs; everything else is
+#   plain shell + Apple tools + electron-builder from the lockfile.
+# - No cross-run caching: release runs are rare, and skipping restores removes
+#   cache poisoning as a vector for this privileged workflow.
+
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write # create the draft release + upload artifacts
+
+jobs:
+  release:
+    runs-on: macos-latest
+    environment: release
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 24
+      - run: npm ci
+      - run: npx install-electron
+
+      # @electron/notarize expects APPLE_API_KEY to be a *path* to the .p8,
+      # while the secret holds the key's content — write it to the job temp dir.
+      - name: Materialise App Store Connect API key
+        run: printf '%s' "$ASC_KEY_CONTENT" > "$RUNNER_TEMP/asc-key.p8"
+        env:
+          ASC_KEY_CONTENT: ${{ secrets.APPLE_API_KEY }}
+
+      # The repo config keeps `identity: null` so local builds never sign.
+      # Here the CLI overrides it with the qualifier "Developer ID Application"
+      # (no trailing colon — electron-builder rejects full cert-name prefixes),
+      # which matches the one identity electron-builder imports from CSC_LINK
+      # into a temporary keychain it creates and destroys itself.
+      # `-c.mac.notarize=true` then signs (hardened runtime + electron-builder's
+      # default Electron entitlements), notarizes via notarytool, and staples.
+      - name: Build, sign, notarize
+        run: |
+          npx electron-vite build
+          npx electron-builder --mac \
+            -c.buildVersion="$GITHUB_REF_NAME" \
+            -c.mac.identity="Developer ID Application" \
+            -c.mac.notarize=true
+        env:
+          CSC_LINK: ${{ secrets.MAC_CERT_P12 }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CERT_PASSWORD }}
+          APPLE_API_KEY: ${{ runner.temp }}/asc-key.p8
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+
+      - name: Shred API key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/asc-key.p8"
+
+      # Independent verification with Apple's own tools: signature validity,
+      # and Gatekeeper acceptance of the dmg (which requires the notarization
+      # ticket to be stapled and valid).
+      - name: Verify signature and notarization
+        run: |
+          codesign --verify --deep --strict --verbose=2 dist/mac*/*.app
+          spctl -a -t open --context context:primary-signature -vv dist/*.dmg
+
+      - name: Draft GitHub release
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/*.dmg dist/*.zip \
+            --draft --verify-tag --generate-notes \
+            --title "Out Of Space $GITHUB_REF_NAME"
+        env:
+          GH_TOKEN: ${{ github.token }}
