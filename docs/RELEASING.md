@@ -16,6 +16,10 @@ Security posture, deliberately boring:
 
 - **Local builds never sign.** `electron-builder.yml` pins `identity: null`; only the
   release workflow overrides it. The signing key does not live on any dev machine.
+- **`npm run package` is not the release entrypoint.** The workflow invokes
+  electron-vite/electron-builder directly, so package.json script edits cannot
+  silently change what gets signed and shipped. The cost: the local and release
+  build invocations must be kept in sync by hand when either changes.
 - **Secrets are environment-gated.** All credentials sit in the `release` GitHub
   Environment, restricted to `v*` tags and gated by a required reviewer — workflows
   on branches and PRs structurally cannot access them.

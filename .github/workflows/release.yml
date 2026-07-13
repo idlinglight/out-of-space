@@ -37,6 +37,12 @@ jobs:
         env:
           ASC_KEY_CONTENT: ${{ secrets.APPLE_API_KEY }}
 
+      # Deliberately does NOT reuse `npm run package` (the local, unsigned
+      # path): keeping the release recipe fully spelled out in this reviewed
+      # file means package.json script changes never silently alter a release
+      # build. The flip side: changes to the local build are NOT mirrored here
+      # automatically — adjust both if both are meant.
+      #
       # The repo config keeps `identity: null` so local builds never sign.
       # Here the CLI overrides it with the qualifier "Developer ID Application"
       # (no trailing colon — electron-builder rejects full cert-name prefixes),

@@ -114,4 +114,5 @@ We use **GitHub Issues** (via `gh`) as the shared backlog.
 
 - Signed + notarized macOS builds are produced **only in CI**, on `v*` tags, via `.github/workflows/release.yml`. Operator manual (cutting a release, credential inventory by name, revocation drill): `docs/RELEASING.md`. Rationale: issue #55.
 - Local builds intentionally never sign (`identity: null` in `electron-builder.yml`) — don't "fix" this; the release workflow overrides it on the CLI.
+- `npm run package` is the **local, unsigned** path only. The release workflow deliberately does *not* reuse it (it invokes electron-vite/electron-builder directly, so package.json script edits can't silently change release builds). Consequence: the two build invocations do not stay in sync automatically — when touching one, check whether the other needs the same change.
 - Workflow hygiene (deliberate, keep it): only GitHub-owned actions pinned to full commit SHAs, no cross-run caching in the release job, secrets only in the tag-restricted `release` environment with required-reviewer approval.
