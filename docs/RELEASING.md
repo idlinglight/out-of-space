@@ -8,9 +8,11 @@ if credentials are ever compromised. Design rationale lives in
 
 Releases are built by [`.github/workflows/release.yml`](../.github/workflows/release.yml),
 triggered by pushing a `v*` tag. The workflow signs with a Developer ID Application
-certificate, notarizes via Apple's `notarytool`, staples the ticket, verifies the
-result with `codesign` and `spctl`, and attaches the dmg + zip to a **draft**
-GitHub release.
+certificate and notarizes via Apple's `notarytool` — both the `.app` and the dmg
+that wraps it, since notarization tickets are per-artifact — staples the tickets,
+verifies the result with `codesign` and `spctl`, and attaches the dmg + zip to a
+**draft** GitHub release. (The zip's app carries its stapled ticket inside; zips
+themselves can't be stapled.)
 
 Security posture, deliberately boring:
 
