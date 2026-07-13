@@ -38,7 +38,8 @@ High-level goals and progress tracking.
 - [x] App icon and basic branding
 
 ### Phase 4 — Release
-- [ ] macOS packaging (.dmg)
-- [ ] GitHub release with binary
+- [x] macOS packaging (.dmg)
+- [x] Signed + notarized builds via tag-gated CI (issue #55, docs/RELEASING.md)
+- [x] GitHub release with binary (v0.1.0)
 - [ ] README with screenshots and usage instructions
 - [ ] Portfolio-ready state

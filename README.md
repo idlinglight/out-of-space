@@ -10,7 +10,13 @@ Built with Electron, Vue 3, and D3.
 
 ## Status
 
-Work in progress — directory scanning, interactive treemap visualisation, and context actions are functional. Packaging remains.
+Work in progress — directory scanning, interactive treemap visualisation, and context actions are functional. Signed and notarized macOS builds are published via Releases.
+
+## Download
+
+Grab the latest dmg from the [Releases page](https://github.com/idlinglight/out-of-space/releases/latest) (macOS, Apple silicon). Builds are code-signed and notarized — both the app and the dmg itself — by a tag-gated CI pipeline; see [docs/RELEASING.md](docs/RELEASING.md) for how releases are produced.
+
+Open the dmg and drag **Out Of Space** to Applications (running it straight from the dmg works too).
 
 ## Getting Started
 
