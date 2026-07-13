@@ -12,6 +12,8 @@ files:
 asar: true
 mac:
   icon: icon.icon
+  # Local builds never sign; the release workflow overrides this on the CLI
+  # (see .github/workflows/release.yml and docs/RELEASING.md)
   identity: null
   target:
     - dmg

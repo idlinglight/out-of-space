@@ -109,3 +109,10 @@ We use **GitHub Issues** (via `gh`) as the shared backlog.
 - **Watching a run:** `OOS_E2E_TRACE=1 npm run test:e2e` records a trace; `npx playwright show-trace test-results/smoke-trace.zip` replays it step by step with screenshots and DOM snapshots. For live stepping, `npx playwright test --debug` opens the Inspector (`slowMo` is not supported by the Electron driver).
 - **Flake budget — scope discipline:** this suite stays at smoke level: boot + a few core flows over a deterministic fixture, its only job being "the assembled app works". Logic and component testing belong in Vitest — do not grow this into a second component suite, and keep `retries: 0` so flakes surface as failures to fix rather than being retried away.
 - **Known coupling:** Playwright's Electron driver occasionally lags a new Electron major — if an Electron bump PR fails only in the e2e job, suspect that before a real regression.
+
+## Releasing
+
+- Signed + notarized macOS builds are produced **only in CI**, on `v*` tags, via `.github/workflows/release.yml`. Operator manual (cutting a release, credential inventory by name, revocation drill): `docs/RELEASING.md`. Rationale: issue #55.
+- Local builds intentionally never sign (`identity: null` in `electron-builder.yml`) — don't "fix" this; the release workflow overrides it on the CLI.
+- `npm run package` is the **local, unsigned** path only. The release workflow deliberately does *not* reuse it (it invokes electron-vite/electron-builder directly, so package.json script edits can't silently change release builds). Consequence: the two build invocations do not stay in sync automatically — when touching one, check whether the other needs the same change.
+- Workflow hygiene (deliberate, keep it): only GitHub-owned actions pinned to full commit SHAs, no cross-run caching in the release job, secrets only in the tag-restricted `release` environment with required-reviewer approval.
