@@ -50,6 +50,9 @@ jobs:
       # into a temporary keychain it creates and destroys itself.
       # `-c.mac.notarize=true` then signs (hardened runtime + electron-builder's
       # default Electron entitlements), notarizes via notarytool, and staples.
+      # Notarization covers the .app only — the dmg wrapper needs its own
+      # signature (`-c.dmg.sign=true`, while electron-builder's temp keychain
+      # still exists) and its own notarization ticket (next step).
       # `--publish never` disables electron-builder's implicit publish-on-tag —
       # the draft release is created by the explicit gh step below instead.
       - name: Build, sign, notarize
@@ -58,10 +61,28 @@ jobs:
           npx electron-builder --mac --publish never \
             -c.buildVersion="$GITHUB_REF_NAME" \
             -c.mac.identity="Developer ID Application" \
-            -c.mac.notarize=true
+            -c.mac.notarize=true \
+            -c.dmg.sign=true
         env:
           CSC_LINK: ${{ secrets.MAC_CERT_P12 }}
           CSC_KEY_PASSWORD: ${{ secrets.MAC_CERT_PASSWORD }}
+          APPLE_API_KEY: ${{ runner.temp }}/asc-key.p8
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+
+      # Tickets are per-artifact: the .app inside is already notarized, but
+      # Gatekeeper assesses the downloaded dmg by its own hash — notarize and
+      # staple it too, so `spctl -t open` accepts it (Apple's recommended
+      # shape for Developer ID dmg distribution).
+      - name: Notarize and staple dmg
+        run: |
+          xcrun notarytool submit dist/*.dmg \
+            --key "$APPLE_API_KEY" \
+            --key-id "$APPLE_API_KEY_ID" \
+            --issuer "$APPLE_API_ISSUER" \
+            --wait
+          xcrun stapler staple dist/*.dmg
+        env:
           APPLE_API_KEY: ${{ runner.temp }}/asc-key.p8
           APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
           APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
