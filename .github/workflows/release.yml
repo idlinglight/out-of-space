@@ -50,10 +50,12 @@ jobs:
       # into a temporary keychain it creates and destroys itself.
       # `-c.mac.notarize=true` then signs (hardened runtime + electron-builder's
       # default Electron entitlements), notarizes via notarytool, and staples.
+      # `--publish never` disables electron-builder's implicit publish-on-tag —
+      # the draft release is created by the explicit gh step below instead.
       - name: Build, sign, notarize
         run: |
           npx electron-vite build
-          npx electron-builder --mac \
+          npx electron-builder --mac --publish never \
             -c.buildVersion="$GITHUB_REF_NAME" \
             -c.mac.identity="Developer ID Application" \
             -c.mac.notarize=true
