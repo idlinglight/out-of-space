@@ -110,6 +110,11 @@ We use **GitHub Issues** (via `gh`) as the shared backlog.
 - **Flake budget — scope discipline:** this suite stays at smoke level: boot + a few core flows over a deterministic fixture, its only job being "the assembled app works". Logic and component testing belong in Vitest — do not grow this into a second component suite, and keep `retries: 0` so flakes surface as failures to fix rather than being retried away.
 - **Known coupling:** Playwright's Electron driver occasionally lags a new Electron major — if an Electron bump PR fails only in the e2e job, suspect that before a real regression.
 
+## Dependency Updates (Dependabot)
+
+- Version updates run via `.github/dependabot.yml` (weekly Monday, grouped minor+patch, majors solo). The file itself documents the **review traps** — electron-builder's untested-in-PR-CI release path, Playwright lagging Electron majors, the TS 7.0.x ignore — read its comments before judging a bump PR. Rationale: issue #60; the pattern is kept deliberately identical across the author's repos.
+- CVE-driven alerts and security updates are separate repo-settings toggles (dependency graph, Dependabot alerts, security updates — all enabled), orthogonal to the YAML.
+
 ## Releasing
 
 - Signed + notarized macOS builds are produced **only in CI**, on `v*` tags, via `.github/workflows/release.yml`. Operator manual (cutting a release, credential inventory by name, revocation drill): `docs/RELEASING.md`. Rationale: issue #55.
