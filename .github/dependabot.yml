@@ -44,6 +44,16 @@ updates:
       # Still current as of 2026-07-31 (latest = 7.0.2, 7.1 dev-only).
       - dependency-name: typescript
         versions: ["7.0.x"]
+      # electron-vite (stable) peer-supports only vite ^5 || ^6 || ^7, so a
+      # vite major fails `npm ci` outright with ERESOLVE (PR #69). Support
+      # arrives with electron-vite 6 (beta-only as of 2026-07-31). Whole-major
+      # ignore, unlike the TS range: the unlock is an electron-vite release,
+      # not a vite version. REMOVE this entry when the electron-vite 6 stable
+      # major PR arrives — that PR is the reminder, and the two bumps belong
+      # in one branch since they only install together. Tracker: issue #70.
+      - dependency-name: vite
+        update-types:
+          - version-update:semver-major
 
   # cooldown is unsupported for github-actions (docs, 2026-07-26) —
   # weekly cadence + review-before-merge is the age guard here.
