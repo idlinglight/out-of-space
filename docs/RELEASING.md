@@ -38,7 +38,7 @@ Security posture, deliberately boring:
 ## Cutting a release
 
 1. Bump `version` in `package.json` (+ lockfile: `npm install --package-lock-only`),
-   commit on `main` (via PR as usual).
+   commit on `main`.
 2. Tag and push: `git tag vX.Y.Z && git push origin vX.Y.Z`
 3. Approve the pending `release` environment run under **Actions** when prompted.
 4. When the run is green, review the draft release (artifacts + generated notes)

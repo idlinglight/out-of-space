@@ -18,6 +18,8 @@ Grab the latest dmg from the [Releases page](https://github.com/idlinglight/out-
 
 Open the dmg and drag **Out Of Space** to Applications (running it straight from the dmg works too).
 
+Requires macOS 13 or newer (the floor set by Electron 44); developed and tested on macOS 26 only.
+
 ## Getting Started
 
 ### Prerequisites
