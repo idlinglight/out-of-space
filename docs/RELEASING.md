@@ -18,6 +18,11 @@ Security posture, deliberately boring:
 
 - **Local builds never sign.** `electron-builder.yml` pins `identity: null`; only the
   release workflow overrides it. The signing key does not live on any dev machine.
+- **The workflow builds the signing keychain itself.** The certificate is imported
+  into a job-local keychain by plain `security` commands in the workflow and handed
+  to electron-builder via `CSC_KEYCHAIN`, so the credential path is fully spelled
+  out in the reviewed file rather than inside electron-builder (whose own keychain
+  code broke on macOS 26.6 — issue #85). The keychain is deleted at job end.
 - **`npm run package` is not the release entrypoint.** The workflow invokes
   electron-vite/electron-builder directly, so package.json script edits cannot
   silently change what gets signed and shipped. The cost: the local and release
