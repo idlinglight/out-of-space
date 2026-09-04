@@ -18,9 +18,12 @@
 #   and still break the next release build — review with docs/RELEASING.md
 #   in mind, and remember release.yml invokes electron-builder directly
 #   (not via `npm run package`). Also: Dependabot caps npm updates at the
-#   package's `latest` dist-tag, which electron-builder's maintainers leave
-#   behind their newest 26.x releases (26.15.4–26.16.0 were never proposed
-#   here). electron-builder bumps are therefore manual — issue #85.
+#   package's `latest` dist-tag, and electron-builder's release automation
+#   only moves `latest` from master; maintenance releases from release/v26
+#   go out under the `v26` tag. With master on 27.x alphas, `latest` is
+#   frozen at 26.15.3 (26.15.4–26.16.0 were never proposed here) until
+#   27.0.0 stable, which will then arrive as a major. 26.x bumps are manual
+#   — upstream electron-builder#9972, issue #85.
 # * electron majors (~every 8 weeks, arrive as solo PRs): Playwright's
 #   Electron driver occasionally lags a new Electron major — if ONLY the
 #   e2e job fails on an Electron bump, suspect that before a real
