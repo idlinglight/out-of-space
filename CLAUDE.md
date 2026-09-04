@@ -112,7 +112,7 @@ We use **GitHub Issues** (via `gh`) as the shared backlog.
 
 ## Dependency Updates (Dependabot)
 
-- Version updates run via `.github/dependabot.yml` (weekly Monday, grouped minor+patch, majors solo). The file itself documents the **review traps** — electron-builder's untested-in-PR-CI release path, Playwright lagging Electron majors, the TS 7.0.x ignore — read its comments before judging a bump PR. Rationale: issue #60; the pattern is kept deliberately identical across the author's repos.
+- Version updates run via `.github/dependabot.yml` (weekly, Friday 18:00 Europe/Vienna, grouped minor+patch, majors solo). The file itself documents the **review traps** — electron-builder's untested-in-PR-CI release path, Playwright lagging Electron majors, the TS 7.0.x ignore — read its comments before judging a bump PR. Rationale: issue #60; the pattern is meant to be identical across the author's repos (this repo moved to Friday first, 2026-09-04; the others still run Monday until synced).
 - CVE-driven alerts and security updates are separate repo-settings toggles (dependency graph, Dependabot alerts, security updates — all enabled), orthogonal to the YAML.
 
 ## Releasing
