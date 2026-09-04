@@ -19,7 +19,12 @@ permissions:
 
 jobs:
   release:
-    runs-on: macos-latest
+    # Pinned to macOS 15, not macos-latest: the macos-26 image build 20260831
+    # (macOS 26.6) verifies the password electron-builder passes to
+    # `security set-key-partition-list`, which electron-builder <= 26.16.0 gets
+    # wrong, and signing fails before anything is built. Revert to macos-latest
+    # once a fixed electron-builder (26.16.1+) is in the lockfile — issue #85.
+    runs-on: macos-15
     environment: release
     timeout-minutes: 30
     steps:
