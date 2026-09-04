@@ -1,17 +1,16 @@
 # Dependabot VERSION updates — this file's presence on main is the enable
 # switch; no settings toggle involved. Spec + rationale: issue #60.
-# Pattern meant to be identical across the author's repos (public and
+# Pattern deliberately identical across the author's repos (public and
 # private): one set of cadence/guard settings to remember, not several.
-# Cadence: Friday 18:00 Europe/Vienna (Monday 06:00 until 2026-09-04).
-# Review time is the weekend, so PRs should be fresh then instead of
-# sitting untouched for a week; with the 3-day cooldown a Friday-evening
-# run also picks up releases through Tuesday. The other repos still run
-# Monday — syncing them is a separate step (issue #60 comment, 2026-09-04).
+# Cadence: Friday 18:00 Europe/Vienna — PRs land right before the weekend
+# review slot instead of ageing through the week; with the 3-day cooldown
+# a Friday run still picks up releases through Tuesday.
 # cooldown mirrors the local npm guard (min-release-age=3 in ~/.npmrc).
 #
-# Deliberately NOT covered here: CVE-driven alerts / security updates are
-# separate repo-settings toggles (dependency graph + Dependabot alerts +
-# Dependabot security updates — all enabled 2026-07-31).
+# Deliberately NOT covered here: CVE-driven alerts are a repo-settings
+# toggle (dependency graph + Dependabot alerts: on). Dependabot's
+# security-update PRs are OFF (2026-09-04) — alerts are fixed by hand,
+# see docs/SECURITY-ALERTS.md.
 #
 # ── Review traps for bump PRs in THIS repo ──────────────────────────────
 # * electron-builder: PR CI never exercises the signing/notarization path
@@ -23,9 +22,6 @@
 #   Electron driver occasionally lags a new Electron major — if ONLY the
 #   e2e job fails on an Electron bump, suspect that before a real
 #   regression (see CLAUDE.md, "End-to-end").
-# * security-update PRs arrive off-schedule and ignore cooldown (docs), so
-#   they can pin a version only days old; `npm ci` from the lockfile passes
-#   the local min-release-age guard regardless — check the age by hand.
 version: 2
 updates:
   - package-ecosystem: npm
