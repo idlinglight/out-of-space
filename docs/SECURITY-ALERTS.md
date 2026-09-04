@@ -18,7 +18,9 @@ git commit -am "Bump <pkg> to <ver> for <GHSA-id> (transitive)"
 git push -u origin HEAD && gh pr create --fill
 ```
 
-Reference run: PR #84 (browserslist, 2026-09-04). Put the publish dates in the commit message: `npm view <pkg> time --json`, read the key for the exact version (`time.modified` is the package's last publish, not the version's).
+Reference run: PR #84 (browserslist, 2026-09-04).
+
+Record the resolved versions and their publish dates in the commit body. That table is the evidence the age policy held, and it survives the squash merge (main takes the commit message, not the PR description). With `--fill`, the same body becomes the PR description; #84 used a separately written PR body instead, which is why its title and commit subject differ slightly. Dates: `npm view <pkg> time --json`, read the key for the exact version (`time.modified` is the package's last publish, not the version's).
 
 ## When it does not work
 
