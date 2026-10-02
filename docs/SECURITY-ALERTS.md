@@ -29,4 +29,4 @@ Record the resolved versions and their publish dates in the commit body. That ta
 
 ## Reading the alerts page
 
-The default view is `is:open`. Links from Dependabot PRs drop that filter, so auto-dismissed alerts appear there too. GitHub auto-dismisses low-impact dev-scope alerts (DoS-class ones, e.g. brace-expansion, nanoid, tar), which is also why `npm audit` lists findings the alerts page does not. Both views are right; they filter differently.
+The default view is `is:open`. Links from Dependabot PRs drop that filter, so auto-dismissed alerts appear there too. GitHub auto-dismisses most low-impact dev-scope alerts (DoS-class ones, e.g. brace-expansion, nanoid, tar), which is also why `npm audit` lists findings the alerts page does not. Not all of them, though: brace-expansion's stack-exhaustion advisories were auto-dismissed while its algorithmic-complexity one (GHSA-q2hr-2g5m-vwhr, PR #96) stayed open — same package, same scope, same recipe. Both views are right; they filter differently.
