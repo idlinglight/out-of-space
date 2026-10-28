@@ -17,13 +17,13 @@
 #   (that runs only on v* tags via release.yml). A bump can be green here
 #   and still break the next release build — review with docs/RELEASING.md
 #   in mind, and remember release.yml invokes electron-builder directly
-#   (not via `npm run package`). Also: Dependabot caps npm updates at the
-#   package's `latest` dist-tag, and electron-builder's release automation
-#   only moves `latest` from master; maintenance releases from release/v26
-#   go out under the `v26` tag. With master on 27.x alphas, `latest` is
-#   frozen at 26.15.3 (26.15.4–26.16.0 were never proposed here) until
-#   27.0.0 stable, which will then arrive as a major. 26.x bumps are manual
-#   — upstream electron-builder#9972, issue #85.
+#   (not via `npm run package`). A local `npm run package` (unsigned) is
+#   the closest check short of a release. Also: Dependabot caps npm
+#   updates at the package's `latest` dist-tag, while electron-builder's
+#   maintenance releases ship under the `v26` tag and `latest` moves only
+#   when the maintainers choose to — Dependabot can lag or skip several
+#   26.x releases, and a specific 26.x is a manual bump (upstream
+#   electron-builder#9972, issue #85).
 # * electron majors (~every 8 weeks, arrive as solo PRs): Playwright's
 #   Electron driver occasionally lags a new Electron major — if ONLY the
 #   e2e job fails on an Electron bump, suspect that before a real
@@ -51,7 +51,6 @@ updates:
       # Vue language-tools support expected around TS 7.1 —
       # https://github.com/vuejs/language-tools/issues/5381
       # Range (not the whole major) so 7.1 DOES get proposed when it ships.
-      # Still current as of 2026-07-31 (latest = 7.0.2, 7.1 dev-only).
       - dependency-name: typescript
         versions: ["7.0.x"]
 

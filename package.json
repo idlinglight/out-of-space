@@ -1,6 +1,6 @@
 {
   "name": "out-of-space",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Visualise what's eating your disk space",
   "main": "./out/main/index.js",
   "author": "Florian Scholz",
