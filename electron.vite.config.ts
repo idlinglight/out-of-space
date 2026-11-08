@@ -19,8 +19,13 @@ function localTimestamp(): string {
   return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`
 }
 
+// Each bundle gets a notice file with the full licence text of every
+// third-party package inlined into it (issue #118).
+const license = { fileName: 'THIRD_PARTY_LICENSES.md' }
+
 export default defineConfig({
   main: {
+    build: { license },
     plugins: [externalizeDepsPlugin()],
     define: {
       __GIT_SHA__: JSON.stringify(gitDescribe()),
@@ -33,6 +38,7 @@ export default defineConfig({
     }
   },
   preload: {
+    build: { license },
     plugins: [externalizeDepsPlugin()],
     resolve: {
       alias: {
@@ -41,6 +47,7 @@ export default defineConfig({
     }
   },
   renderer: {
+    build: { license },
     plugins: [vue()],
     resolve: {
       alias: {
