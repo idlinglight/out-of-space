@@ -17,10 +17,8 @@
 #   (that runs only on v* tags via release.yml). A bump can be green here
 #   and still break the next release build — review with docs/RELEASING.md
 #   in mind, and remember release.yml invokes electron-builder directly
-#   (not via `npm run package`). The closest check short of a release:
-#   `gh workflow run package-check.yml --ref <PR branch>` (unsigned
-#   packaging + asar contents + launch; .github/workflows/package-check.md).
-#   Also: Dependabot caps npm
+#   (not via `npm run package`). A local `npm run package` (unsigned) is
+#   the closest check short of a release. Also: Dependabot caps npm
 #   updates at the package's `latest` dist-tag, while electron-builder's
 #   maintenance releases ship under the `v26` tag and `latest` moves only
 #   when the maintainers choose to — Dependabot can lag or skip several
