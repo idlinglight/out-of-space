@@ -45,6 +45,9 @@ npm test
 # End-to-end smoke tests (Playwright, launches the built app)
 npm run test:e2e
 
+# Packaged-build check (packages unsigned, checks app.asar, launches the .app)
+npm run test:package
+
 # Production build
 npm run build
 ```
