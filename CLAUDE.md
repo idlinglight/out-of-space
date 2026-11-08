@@ -95,7 +95,7 @@ We use **GitHub Issues** (via `gh`) as the shared backlog.
 - **Framework:** Vitest (renderer and shared code)
 - **Test location:** `tests/vitest/` — Vitest's `include` is scoped here exclusively
 - **Environment:** jsdom (global default; sufficient at current project scale)
-- **Future:** `tests/node/` is reserved for Node's built-in test runner (not managed by Vitest)
+- **Packaged build (issue #120):** `tests/node/` (Node's built-in runner, not Vitest) checks the packaged app: `app.asar` contents, plus a launch with positive signals. `npm run test:package` packages unsigned and runs it. In CI it runs with every release and on demand, not on PRs. See `.github/workflows/package-check.md`.
 - **Run:** `npm test` (single run), `npm run test:watch` (watch mode)
 - **Mocking `window.api`:** Use `vi.stubGlobal('api', mockApi)` in renderer tests
 - **Pinia in tests:** `setActivePinia(createPinia())` in `beforeEach` — no `@pinia/testing` needed
@@ -121,3 +121,4 @@ We use **GitHub Issues** (via `gh`) as the shared backlog.
 - Local builds intentionally never sign (`identity: null` in `electron-builder.yml`) — don't "fix" this; the release workflow overrides it on the CLI.
 - `npm run package` is the **local, unsigned** path only. The release workflow deliberately does *not* reuse it (it invokes electron-vite/electron-builder directly, so package.json script edits can't silently change release builds). Consequence: the two build invocations do not stay in sync automatically — when touching one, check whether the other needs the same change.
 - Workflow hygiene (deliberate, keep it): only GitHub-owned actions pinned to full commit SHAs, no cross-run caching in the release job, secrets only in the tag-restricted `release` environment with required-reviewer approval.
+- `release.yml` also calls `package-check.yml` as a parallel job: no environment, no secrets, read-only token. A red `package-check` on the release run means don't publish the draft.

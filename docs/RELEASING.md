@@ -34,6 +34,10 @@ Security posture, deliberately boring:
   to full commit SHAs; the rest is shell, Apple's tools, and electron-builder from
   the lockfile.
 - **No cross-run caching** in the release job, so cache poisoning is not a vector.
+- **Packaged-build check alongside.** The same run has a `package-check` job, an
+  unsigned packaging plus `app.asar` and launch checks
+  ([package-check.md](../.github/workflows/package-check.md)). It has no environment,
+  no secrets and a read-only token, so it starts without approval.
 
 ## Cutting a release
 
@@ -41,8 +45,14 @@ Security posture, deliberately boring:
    commit on `main`.
 2. Tag and push: `git tag vX.Y.Z && git push origin vX.Y.Z`
 3. Approve the pending `release` environment run under **Actions** when prompted.
-4. When the run is green, review the draft release (artifacts + generated notes)
-   under **Releases** and publish it manually.
+   The `package-check` job on the same run page needs no approval.
+4. When both jobs are green, review the draft release (artifacts + generated notes)
+   under **Releases** and publish it manually. A red `package-check` means the
+   packaged app is broken: don't publish.
+
+Changes that can affect packaging (bumps of electron-builder, electron-vite or Vite;
+edits to `electron-builder.yml` or `electron.vite.config.ts`) can be checked before
+any tag: `gh workflow run package-check.yml --ref <branch>`.
 
 Nothing else is per-release; the one-time credential setup is described below only
 by shape, not by value.
