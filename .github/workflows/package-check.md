@@ -11,7 +11,7 @@
 ## What it checks
 
 **Contents** ([`package-contents.test.mts`](../../tests/node/package-contents.test.mts)), read from plain Node with `@electron/asar`:
-- The top level holds exactly `LICENSE`, `out` and `package.json`; `out/` holds exactly `main`, `preload` and `renderer`.
+- The top level holds exactly `LICENSE`, `out` and `package.json`, plus `node_modules` once `package.json` declares runtime `dependencies`, which electron-builder packs there. `out/` holds exactly `main`, `preload` and `renderer`.
 - `.gitignore` and `.github/dependabot.yml` are absent. These are named exemplars for electron-builder's default ignores.
 - The entry file named by the packed `package.json` `main`, the preload script and `index.html` are present.
 - `LICENSE` and the three `THIRD_PARTY_LICENSES.md` files are present and non-empty.
@@ -41,6 +41,7 @@ It looks for positive signs because missing files never make the app exit:
 
 - **macOS runner:** electron-builder compiles the `.icon` app icon with Xcode's `actool`, and the app only runs on macOS.
 - **No caching**, same rule as the release job. Every run downloads Electron from GitHub releases. A download error there (e.g. HTTP 504) is not a check failure: re-run.
+- **No `npx install-electron`:** packaging doesn't use the npm package's binary. electron-builder downloads its own Electron zip, and only uses a local copy when `electronDist` is configured.
 - **Remote debugging:** the launch check relies on `--remote-debugging-port` working in packaged builds. If shipped builds ever disable it, steps 1–3 need a different signal. It doesn't use `--inspect`, which Electron's fuses can turn off.
 
 ## Changing the checks

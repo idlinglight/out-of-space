@@ -2,11 +2,17 @@
 // asar fs patching, so the .asar is just a file and @electron/asar reads it.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import { posix } from 'node:path'
 import { extractFile, listPackage } from '@electron/asar'
 import { asarPath, packagedAppPath } from './helpers/packaged-app.mts'
 
 const archive = asarPath(packagedAppPath())
+// electron-builder packs production dependencies as a top-level node_modules/
+const { dependencies = {} } = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')) as {
+  dependencies?: Record<string, string>
+}
+const expectedTopLevel = ['LICENSE', ...(Object.keys(dependencies).length ? ['node_modules'] : []), 'out', 'package.json']
 // listPackage yields '/'-rooted entries ("/out/main"); keep them relative
 const entries = new Set(listPackage(archive, { isPack: false }).map((entry) => entry.replace(/^\//, '')))
 
@@ -22,8 +28,8 @@ function assertPacked(path: string): void {
   assert.ok(entries.has(path), `${path} is missing from app.asar`)
 }
 
-test('top level holds only LICENSE, out and package.json', () => {
-  assert.deepEqual(childrenOf(''), ['LICENSE', 'out', 'package.json'])
+test('top level holds only LICENSE, out and package.json (plus node_modules with runtime dependencies)', () => {
+  assert.deepEqual(childrenOf(''), expectedTopLevel)
 })
 
 test('out/ holds only the main, preload and renderer bundles', () => {
