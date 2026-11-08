@@ -139,3 +139,10 @@ jobs:
             --title "Out Of Space $GITHUB_REF_NAME"
         env:
           GH_TOKEN: ${{ github.token }}
+
+  # Unsigned packaged-build check, in parallel with the gated job above:
+  # no environment, no secrets, read-only token (see package-check.md)
+  package-check:
+    uses: ./.github/workflows/package-check.yml
+    permissions:
+      contents: read
