@@ -3,12 +3,13 @@ productName: Out Of Space
 directories:
   buildResources: build
   output: dist
+# Allowlist: electron-vite's output plus the licence. Any include pattern stops
+# electron-builder from packing the whole repo (it prepends `**/*` when `files`
+# holds only `!` exclusions); package.json and production node_modules are
+# always added. Typecheck leaves *.tsbuildinfo in out/, hence the subdirectories.
 files:
-  - "!**/.vscode/*"
-  - "!src/*"
-  - "!electron.vite.config.*"
-  - "!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}"
-  - "!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}"
+  - "out/{main,preload,renderer}/**/*"
+  - LICENSE
 asar: true
 mac:
   icon: icon.icon
