@@ -3,6 +3,11 @@ name: CI
 on:
   pull_request:
     branches: [main]
+    # Docs-only PRs skip CI: the workflow runs only if at least one changed
+    # file (added, modified or deleted) is neither Markdown nor under docs/
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
 
 jobs:
   typecheck-and-test:

@@ -97,6 +97,7 @@ We use **GitHub Issues** (via `gh`) as the shared backlog.
 - **Environment:** jsdom (global default; sufficient at current project scale)
 - **Packaged build (issue #120):** `tests/node/` (Node's built-in runner, not Vitest) checks the packaged app: `app.asar` contents, plus a launch with positive signals. `npm run test:package` packages unsigned and runs it. In CI it runs with every release and on demand, not on PRs. See `.github/workflows/package-check.md`.
 - **Run:** `npm test` (single run), `npm run test:watch` (watch mode)
+- **CI on PRs (`ci.yml`):** typecheck and Vitest on Linux, the e2e suite on macOS. PRs that change only Markdown or `docs/` skip it (issue #128): no checks appear on the PR, and that is the expected result.
 - **Mocking `window.api`:** Use `vi.stubGlobal('api', mockApi)` in renderer tests
 - **Pinia in tests:** `setActivePinia(createPinia())` in `beforeEach` — no `@pinia/testing` needed
 
