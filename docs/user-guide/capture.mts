@@ -38,45 +38,65 @@ function random(): number {
 const between = (min: number, max: number): number => Math.round(min + random() * (max - min))
 const pad = (n: number, width = 2): string => String(n).padStart(width, '0')
 
+// Folders hold a mix of file types on purpose: a folder then reads as a block
+// by its frame, not by a single colour
 function demoFiles(): Array<[string, number]> {
   const files: Array<[string, number]> = [
-    ['video-course/raw/lesson-01.mov', 780 * MB],
-    ['video-course/raw/lesson-02.mov', 610 * MB],
-    ['video-course/raw/lesson-03.mov', 940 * MB],
-    ['video-course/export/lesson-01.mp4', 210 * MB],
-    ['video-course/export/lesson-02.mp4', 165 * MB],
-    ['video-course/export/lesson-03.mp4', 255 * MB],
+    ['video-course/raw/lesson-01.mov', 520 * MB],
+    ['video-course/raw/lesson-02.mov', 410 * MB],
+    ['video-course/raw/lesson-03.mov', 640 * MB],
+    ['video-course/export/lesson-01.mp4', 150 * MB],
+    ['video-course/export/lesson-02.mp4', 120 * MB],
+    ['video-course/export/lesson-03.mp4', 180 * MB],
+    ['video-course/assets/title-cards.zip', 210 * MB],
+    ['video-course/assets/b-roll.zip', 160 * MB],
     ['video-course/audio/intro.wav', 96 * MB],
     ['video-course/audio/music.flac', 58 * MB],
-    ['video-course/slides.pdf', 34 * MB],
-    ['video-course/outline.md', 14 * KB],
-    ['backups/photos-2024.zip', 1150 * MB],
-    ['backups/old-laptop.dmg', 890 * MB],
-    ['backups/site-backup.tar.gz', 420 * MB],
-    ['data-analysis/data/measurements.parquet', 640 * MB],
-    ['data-analysis/data/cache.sqlite', 310 * MB],
+    ['video-course/slides.pdf', 140 * MB],
+    ['video-course/workbook.pdf', 95 * MB],
+    ['video-course/handout.docx', 40 * MB],
+    ['video-course/project.json', 2 * MB],
+    ['backups/photos-2024.zip', 760 * MB],
+    ['backups/old-laptop.dmg', 540 * MB],
+    ['backups/site-backup.tar.gz', 320 * MB],
+    ['backups/mail-archive.db', 280 * MB],
+    ['backups/contacts.sqlite', 60 * MB],
+    ['backups/bookmarks.json', 35 * MB],
+    ['backups/home-videos/holiday.mp4', 190 * MB],
+    ['data-analysis/data/measurements.parquet', 520 * MB],
+    ['data-analysis/data/cache.sqlite', 260 * MB],
     ['data-analysis/data/survey.csv', 120 * MB],
-    ['data-analysis/report.docx', 6 * MB],
+    ['data-analysis/notebooks/model.pkl', 180 * MB],
+    ['data-analysis/notebooks/exploration.ipynb', 45 * MB],
+    ['data-analysis/report.pdf', 60 * MB],
+    ['data-analysis/report.docx', 22 * MB],
     ['data-analysis/analysis.py', 48 * KB],
     ['data-analysis/environment.yml', 2 * KB],
+    ['photos/albums/summer.pdf', 80 * MB],
+    ['photos/catalog.sqlite', 90 * MB],
     ['website/package.json', 3 * KB],
     ['website/package-lock.json', 410 * KB],
     ['website/README.md', 6 * KB],
-    ['website/dist/assets/index.js', 620 * KB],
+    ['website/dist/assets/index.js', 2 * MB],
     ['website/dist/assets/index.css', 84 * KB],
-    ['website/public/hero.png', 3 * MB],
+    ['website/public/video/demo.mp4', 90 * MB],
     ['website/public/logo.svg', 22 * KB],
+    ['website/design/mockups.zip', 60 * MB],
     ['notes/ideas.md', 9 * KB],
     ['notes/meeting-notes.txt', 21 * KB],
     ['todo.txt', 1 * KB]
   ]
-  for (let i = 1; i <= 8; i++) files.push([`data-analysis/figures/figure-${pad(i)}.png`, between(300 * KB, 2 * MB)])
+  for (let i = 1; i <= 12; i++) files.push([`video-course/assets/thumbnails/thumb-${pad(i)}.png`, between(6 * MB, 14 * MB)])
+  for (let i = 1; i <= 8; i++) files.push([`backups/scans/contract-${pad(i)}.pdf`, between(12 * MB, 30 * MB)])
+  for (let i = 1; i <= 10; i++) files.push([`data-analysis/figures/figure-${pad(i)}.png`, between(8 * MB, 24 * MB)])
+  for (let i = 1; i <= 6; i++) files.push([`website/public/images/hero-${pad(i)}.png`, between(4 * MB, 12 * MB)])
   for (let i = 1; i <= 24; i++) files.push([`website/src/components/Component${pad(i)}.vue`, between(2 * KB, 30 * KB)])
   for (let i = 1; i <= 12; i++) files.push([`website/src/lib/module-${pad(i)}.ts`, between(1 * KB, 40 * KB)])
   for (const year of [2024, 2025]) {
-    for (let i = 1; i <= 70; i++) files.push([`photos/${year}/IMG_${pad(i, 4)}.jpg`, between(3 * MB, 9 * MB)])
+    for (let i = 1; i <= 60; i++) files.push([`photos/${year}/IMG_${pad(i, 4)}.jpg`, between(3 * MB, 9 * MB)])
   }
   for (let i = 1; i <= 12; i++) files.push([`photos/raw/DSC_${pad(i, 4)}.raw`, between(24 * MB, 42 * MB)])
+  for (let i = 1; i <= 5; i++) files.push([`photos/clips/clip-${pad(i)}.mov`, between(30 * MB, 70 * MB)])
   // The bulk: enough small files that a scan takes long enough to photograph
   for (let p = 1; p <= 160; p++) {
     for (let i = 1; i <= 200; i++) {
@@ -106,8 +126,8 @@ async function createDemoTree(): Promise<number> {
 
 // ── App ──────────────────────────────────────────────────────────────────
 
-async function shot(page: Page, name: string, clip?: { x: number; y: number; width: number; height: number }): Promise<void> {
-  await page.screenshot({ path: join(outDir, `${name}.png`), clip })
+async function shot(page: Page, name: string): Promise<void> {
+  await page.screenshot({ path: join(outDir, `${name}.png`) })
   console.log(`  ${name}.png`)
 }
 
@@ -144,13 +164,10 @@ async function parkPointer(page: Page): Promise<void> {
   await page.waitForTimeout(300)
 }
 
-// Arrow Right walks the siblings in size order, wrapping around
-async function selectSibling(page: Page, name: string): Promise<void> {
-  const current = page.locator('.toolbar-pill--current')
-  for (let i = 0; i < 20 && (await current.textContent()) !== name; i++) {
-    await page.keyboard.press('ArrowRight')
-  }
-  if ((await current.textContent()) !== name) throw new Error(`No sibling named ${name}`)
+// The wait covers the treemap's re-layout, 150 ms after a resize
+async function setWindowSize(app: ElectronApplication, page: Page, width: number, height: number): Promise<void> {
+  await app.evaluate(({ BrowserWindow }, [w, h]) => BrowserWindow.getAllWindows()[0].setSize(w, h), [width, height])
+  await page.waitForTimeout(500)
 }
 
 async function capture(): Promise<void> {
@@ -170,6 +187,8 @@ async function capture(): Promise<void> {
       dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [path] })
     }, root)
 
+    // Welcome and scanning are mostly empty: take them at the smallest window size
+    await setWindowSize(app, page, 800, 600)
     await page.getByRole('button', { name: 'Open Folder' }).waitFor()
     await shot(page, 'welcome')
 
@@ -181,6 +200,7 @@ async function capture(): Promise<void> {
     await setSlowDisk(app, false)
 
     await fileTile(page, 'photos-2024.zip').waitFor()
+    await setWindowSize(app, page, 1200, 800)
     await parkPointer(page)
     await shot(page, 'overview')
 
@@ -203,14 +223,16 @@ async function capture(): Promise<void> {
     await shot(page, 'context-menu')
     await page.keyboard.press('Escape')
 
-    // To website/node_modules by keyboard: its tiles are too small to click by name
-    await page.keyboard.press('ArrowUp') // from data to data-analysis
-    await selectSibling(page, 'website')
+    // Two levels down: video-course, then assets
+    await fileTile(page, 'title-cards.zip').click()
+    await page.getByRole('button', { name: 'Select Parent' }).click() // assets
+    await page.getByRole('button', { name: 'Select Parent' }).click() // video-course
     await page.getByRole('button', { name: 'Drill Into' }).click()
-    await page.keyboard.press('ArrowDown') // largest child: node_modules
+    await fileTile(page, 'title-cards.zip').click()
+    await page.getByRole('button', { name: 'Select Parent' }).click() // assets
     await page.getByRole('button', { name: 'Drill Into' }).click()
-    await page.locator('.rootbar-segment--current', { hasText: 'node_modules' }).waitFor()
-    await page.keyboard.press('ArrowDown')
+    await page.locator('.rootbar-segment--current', { hasText: 'assets' }).waitFor()
+    await fileTile(page, 'thumb-03.png').click()
     await parkPointer(page)
     await shot(page, 'drilled')
 
@@ -227,9 +249,12 @@ async function capture(): Promise<void> {
     await shot(page, 'light')
     await page.emulateMedia({ colorScheme: 'dark' })
 
+    // The palettes side by side: whole window, small, so every file type shows
+    await setWindowSize(app, page, 800, 600)
     for (const palette of ['solarized', 'legacy', 'hslRad8_1', 'hslRad9_1']) {
       await page.selectOption('select.palette-select', palette)
-      await shot(page, `palette-${palette}`, { x: 0, y: 0, width: 600, height: 400 })
+      await parkPointer(page)
+      await shot(page, `palette-${palette}`)
     }
   } finally {
     await app.close()

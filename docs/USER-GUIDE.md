@@ -1,20 +1,16 @@
 # User guide
 
-Out Of Space scans a folder and draws its contents as a treemap: every file is a rectangle, and the bigger the file, the bigger the rectangle. This guide describes the interface as it is, including the parts that are unfinished. Those are collected under [Known gaps](#known-gaps).
+Out Of Space scans a folder and draws its contents as a treemap: every file is a rectangle, and the bigger the file, the bigger the rectangle. This guide describes the interface as it is.
 
-The screenshots show a generated demo folder, not real data. [Regenerating the screenshots](#regenerating-the-screenshots) explains how they are made.
+The screenshots show a generated demo folder, not real data, and were taken on macOS. [Regenerating the screenshots](#regenerating-the-screenshots) explains how they are made.
 
 ## Opening a folder
 
-The app starts with one button.
+The app starts with one button. **Open Folder** shows the system folder dialog, and choosing a folder starts the scan at once. While the scan runs, the window shows how many entries it has found and the path it is working on.
 
-![Welcome screen with the Open Folder button](user-guide/welcome.png)
-
-**Open Folder** shows the system folder dialog. Choosing a folder starts the scan at once.
-
-While the scan runs, the window shows how many entries it has found and the path it is working on.
-
-![Scan in progress: entry count and current path](user-guide/scanning.png)
+| Start | Scan in progress |
+|---|---|
+| ![Welcome screen with the Open Folder button](user-guide/welcome.png) | ![Scan in progress: entry count and current path](user-guide/scanning.png) |
 
 What the scan counts:
 
@@ -39,7 +35,7 @@ From top to bottom:
 ## Reading the treemap
 
 - **Area is size.** A file's rectangle is proportional to its size within the folder in view.
-- **Folders are frames.** A folder is the rectangle around its contents; only a thin border of it shows. The border's shade changes with depth, over three levels.
+- **Folders are frames.** A folder is the rectangle around its contents; only a thin border of it shows. Its files sit together inside that frame, so a folder reads as one block whatever mix of file types it holds. The border's shade changes with depth, over three levels.
 - **Colour is file type**, taken from the file extension:
 
   | Type | Extensions |
@@ -70,8 +66,8 @@ The buttons on the right act on the selection:
 
 | Button | Shown for | What it does |
 |---|---|---|
-| **Reveal** | any selection | Shows the item in Finder. |
-| **Terminal** | folders | Opens Terminal in that folder. |
+| **Reveal** | any selection | Shows the item in the system's file manager: Finder on macOS, Explorer on Windows. |
+| **Terminal** | folders | Opens a terminal in that folder: Terminal on macOS, a Command Prompt on Windows. |
 | **Drill Into** | folders | Makes that folder the one in view. |
 | **Select Parent** | anything but the scanned folder itself | Moves the selection to the enclosing folder. |
 
@@ -95,7 +91,7 @@ The status bar shows one thing at a time, in this order: the hint for the button
 - The names in the root bar's path are links. The grey part is the scanned folder; each name after it jumps to that level.
 - Cmd+Up moves one level.
 
-![Two levels down, inside website/node_modules](user-guide/drilled.png)
+![Two levels down, inside video-course/assets](user-guide/drilled.png)
 
 **Rescan** reads the scanned folder again. **Open** scans a different one. During a scan the previous picture stays visible under an overlay and both buttons are disabled. When the scan finishes, the view returns to the top of the scanned folder and the selection is cleared.
 
@@ -107,8 +103,10 @@ A right-click on a rectangle opens a menu for that item. It acts on the item und
 
 ![Context menu on a folder](user-guide/context-menu.png)
 
-- **Reveal in File Manager** shows the item in Finder.
-- **Open Terminal Here** opens Terminal in that folder. Files don't have this entry.
+- **Reveal in File Manager** does what the **Reveal** button does.
+- **Open Terminal Here** does what the **Terminal** button does. Files don't have this entry.
+
+The entries name no particular program, because the app runs on Windows as well as on macOS.
 
 Escape, or a click anywhere else, closes the menu.
 
@@ -132,7 +130,7 @@ The window follows the system's light or dark appearance.
 
 ![Light appearance](user-guide/light.png)
 
-The treemap has its own colours, chosen in the palette menu in the header. There are four palettes; the choice lasts until the app quits.
+The treemap has its own colours, chosen in the palette menu in the header. There are four palettes; the choice lasts until the app quits. The same folder in each:
 
 | | |
 |---|---|
@@ -144,47 +142,7 @@ The treemap has its own colours, chosen in the palette menu in the header. There
 - **One window**, 1200 by 800 points at start, at least 800 by 600.
 - **The menu bar is Electron's standard one.** It has no entries of the app's own, so opening a folder and rescanning are available only as buttons.
 - **About Out Of Space**, in the application menu, shows the version together with the commit and the build time.
-- **Closing the window does not quit the app.** A click on the Dock icon opens a new, empty window.
-
-## Known gaps
-
-The state of the interface when this guide was written. Each item was checked in the running app unless it says otherwise.
-
-**Getting around**
-
-- Drilling in by double-click needs the folder's thin border as a target ([#18](https://github.com/idlinglight/out-of-space/issues/18)). A double-click on a file does nothing.
-- There is no key for "drill into" other than Cmd+Down; Enter does nothing.
-- The arrow keys can select an item that is too small to be drawn. The selection bar names it, the treemap shows no outline ([#34](https://github.com/idlinglight/out-of-space/issues/34); not re-checked here).
-- Arrow Up followed by Arrow Down lands on the largest item, not on the one the selection came from ([#36](https://github.com/idlinglight/out-of-space/issues/36)).
-- While the palette menu has the keyboard focus, the arrow keys do nothing in the treemap. The menu keeps the focus after a palette is chosen, until a click elsewhere (checked with the focus placed on the menu).
-- With the context menu open, the arrow keys still move the selection behind it.
-- **Drill Into** is offered when the selection is the folder already in view, where it does nothing.
-- A selection can be changed but not cleared, short of a rescan.
-
-**Feedback**
-
-- A failed scan is silent. If the folder can't be read, the window stays as it was. The app records the error and no view shows it.
-- During a scan, the path line shows its leading slash at the end (`Users/…/file.js/`). The line is laid out right to left so that long paths keep their end visible, and that moves the slash.
-- The count during a scan says "files found" and includes folders.
-- With a selection and the pointer elsewhere, the status bar shows the selection's size and not its path.
-- Folders are never named in the treemap. A view made of folders, like the `node_modules` picture above, has no names at all.
-- The selection outline is red. On the Solarized palette's magenta media files it is hard to see.
-- The size shown is file length, not space taken on disk. Sparse files, clones and hard links are counted at full length each; the demo folder claims about 9 GB and takes almost none.
-
-**State**
-
-- **Rescan** returns the view to the top level and clears the selection.
-- The palette is not remembered between launches. Two of the four palettes carry working names (`HSL Radial 0°/37%/19% CA`).
-- **View → Reload** (Cmd+R) is part of the standard menu and throws the scan away. So does closing the window ([#4](https://github.com/idlinglight/out-of-space/issues/4)).
-
-**Naming**
-
-- The same two actions are "Reveal" and "Terminal" on the buttons, "Reveal in File Manager" and "Open Terminal Here" in the context menu, and "Show in Finder" and "Open in Terminal" in the project documents.
-
-**Described elsewhere, not in the app**
-
-- Dropping a folder on the window. Nothing in the app handles a drop; what a drop does was not tested.
-- Switching the visualisation mode, which the README lists as a feature. The sunburst view is a placeholder, and no control switches to it.
+- **Closing the window does not quit the app** on macOS. A click on the Dock icon opens a new, empty window. On Windows, closing the window quits.
 
 ## Regenerating the screenshots
 

@@ -18,7 +18,7 @@ Read these to understand the project context:
 |----------------|--------------------------------------------------|----------------------------------------|
 | `README.md`    | User-facing project overview, setup instructions | Before suggesting setup/run changes    |
 | `DESIGN.md`    | Design decisions, scope, constraints, rationale  | Before proposing architecture changes  |
-| `docs/USER-GUIDE.md` | The interface as it is, with screenshots and known gaps | Before changing UI behaviour; update it (and its screenshots) afterwards |
+| `docs/USER-GUIDE.md` | The interface as it is, with screenshots | Before changing UI behaviour; update it (and its screenshots) afterwards |
 
 ## Architecture
 
