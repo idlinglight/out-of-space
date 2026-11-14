@@ -8,6 +8,8 @@ Built with Electron, Vue 3, and D3.
 
 ![Treemap visualisation of a scanned directory](docs/early-screenshot.png)
 
+The [user guide](docs/USER-GUIDE.md) walks through the interface with screenshots.
+
 ## Status
 
 Work in progress — directory scanning, interactive treemap visualisation, and context actions are functional. Signed and notarized macOS builds are published via Releases.

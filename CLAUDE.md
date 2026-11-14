@@ -18,6 +18,7 @@ Read these to understand the project context:
 |----------------|--------------------------------------------------|----------------------------------------|
 | `README.md`    | User-facing project overview, setup instructions | Before suggesting setup/run changes    |
 | `DESIGN.md`    | Design decisions, scope, constraints, rationale  | Before proposing architecture changes  |
+| `docs/USER-GUIDE.md` | The interface as it is, with screenshots and known gaps | Before changing UI behaviour; update it (and its screenshots) afterwards |
 
 ## Architecture
 
@@ -63,7 +64,7 @@ Since Electron 42, the npm package no longer downloads the binary via `postinsta
 - **Platform:** Assume macOS unless otherwise noted.
 - **Router:** Must use `createWebHashHistory()` (Electron requirement).
 - **Dependencies:** Only main-process runtime externals go in `dependencies`. Everything else (including Vue, D3) is a `devDependency` since Vite bundles them into the renderer.
-- **Doc maintenance:** After completing a feature or making significant changes, check if README.md or DESIGN.md need updating. Keep them in sync with reality.
+- **Doc maintenance:** After completing a feature or making significant changes, check if README.md, DESIGN.md or docs/USER-GUIDE.md need updating. Keep them in sync with reality.
 - **Version pinning:** When specifying versions (Node.js, Electron, Actions, etc.) in CI configs, Dockerfiles, or plans, verify against actual release data (e.g. nodejs.org, releases.electronjs.org) rather than assuming from memory. Version landscapes shift frequently.
 
 ## Issue Tracking
