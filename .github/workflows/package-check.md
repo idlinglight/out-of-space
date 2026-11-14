@@ -46,4 +46,4 @@ It looks for positive signs because missing files never make the app exit:
 
 ## Changing the checks
 
-Confirm that a changed check still fails where it should. Extract the asar with `node node_modules/@electron/asar/bin/asar.js extract`, delete or add a file, repack with `… pack`, and copy the result into a duplicate of the `.app`. Point `OOS_PACKAGED_APP` at it. `asar extract-file` writes into the current directory; don't run it from the repo root.
+Confirm that a changed check still fails where it should. Extract the asar with `node node_modules/@electron/asar/bin/asar.mjs extract`, delete or add a file, repack with `… pack`, and copy the result into a duplicate of the `.app`. Point `OOS_PACKAGED_APP` at it. `asar extract-file` writes into the current directory; don't run it from the repo root.
